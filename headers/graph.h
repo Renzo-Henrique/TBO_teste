@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "adjacency_list.h"
+#include "priority_queue.h"
 
 typedef struct graph Graph;
 
@@ -33,6 +34,6 @@ void graph_free(Graph* g);
 
 void graph_TOTAL_Dijkstra(Graph* g);
 
-void graph_Dijkstra(Graph* g, int source, double* dist, int* prev);
+void graph_Dijkstra(Graph* g, int source, double* dist, int* prev, priority_queue* queue);
 
 #endif

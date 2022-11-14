@@ -103,10 +103,8 @@ void insert(binary_heap* a, int x, double value){
 static void sift_down(binary_heap* a, int i){
     if(a==NULL) return;
     int j= 0;
-
     //1 >= child
     while( 2*i + 1 < a->n){
-
         //take the child with the biggest priority ( in this case, min(left_child, right_child) )
         j = 2*i + 1;
         if( (2*i + 2) < (a->n) && cmp( a->map_values[a->h[2*i+2]] , a->map_values[a->h[j]] ) < 0 ){
@@ -117,7 +115,7 @@ static void sift_down(binary_heap* a, int i){
         if( cmp( a->map_values[a->h[i]], a->map_values[a->h[j]]) <= 0){
             break;
         }
-        else {
+        else{
             swap(a, &(a->h[j]), &(a->h[i]));
             i = j;
         }
@@ -134,7 +132,7 @@ int remove_(binary_heap* a){
     swap(a, &(a->h[a->n-1]), &(a->h[0]));
     a->n--;
     sift_down(a, 0);
-    printf("%d\n",a->h[a->n]);
+    printf("**%d\n",a->h[a->n]);
     return a->h[a->n];
 }
 
