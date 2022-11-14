@@ -39,8 +39,7 @@ void adjacency_list_create_next_neighbor(Adjacency_list* l, int source, Cell* ne
         new->weight = weight;
         new->next = NULL;
         neighbor->next = new;
-        neighbor = new;
-        
+        neighbor = new;        
     }
     //if neighbor is equal to NULL, tries to create from the vector of CELLS
     else{

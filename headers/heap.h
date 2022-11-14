@@ -13,6 +13,8 @@ void insert(binary_heap* a, int x, double value);
 
 double heap_get_priority(binary_heap* a, int id);
 
+int heap_get_heap_id(binary_heap* a, int idx);
+
 void heap_set_priority(binary_heap* a, int id, double value);
 
 int remove_(binary_heap* a);

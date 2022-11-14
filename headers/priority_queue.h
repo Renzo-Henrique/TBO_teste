@@ -4,6 +4,7 @@
 
 typedef binary_heap priority_queue;
 
+
 priority_queue* new_priority_queue(int size);
 //push id
 void push(priority_queue* q, int x, double value);
@@ -16,11 +17,13 @@ int pop(priority_queue* q);
 
 int top(priority_queue* q);
 
+int get_heap_id(priority_queue* a, int idx);
 
 void delete_priority_queue(priority_queue* q);
 
 int size_queue(priority_queue* q);
 
 void show_inside_priority_queue(priority_queue* q);
+
 
 #endif

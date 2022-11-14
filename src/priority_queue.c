@@ -1,4 +1,4 @@
-#include "heap.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "priority_queue.h"
@@ -27,6 +27,9 @@ int top(priority_queue* q){
         return top_heap(q);
 }
 
+int get_heap_id(priority_queue* a, int idx){
+        return heap_get_heap_id(a, idx);
+}
 
 void delete_priority_queue(priority_queue* q){
         delete_binary_heap(q);
