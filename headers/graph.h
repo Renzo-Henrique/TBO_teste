@@ -34,6 +34,6 @@ void graph_free(Graph* g);
 
 void graph_TOTAL_Dijkstra(Graph* g);
 
-void graph_Dijkstra(Graph* g, int source, double* dist, int* prev, priority_queue* queue);
+void graph_Dijkstra(Graph* g, int source, double* dist, int* prev);
 
 #endif

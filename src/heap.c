@@ -1,184 +1,185 @@
-#include "../headers/heap.h"
-//
-// Created by user on 7/24/2022.
-//
+#include "heap.h"
 
+typedef struct Item Item;
 
-#define     MIN_HEAP_FLAG       INT_MAX
-#define     MAX_HEAP_FLAG       INT_MIN
-
-//change here
-#define     FLAG        MIN_HEAP_FLAG
-
-struct binary_heap{
-    //h is only for indices
-    int* h;//4bytes
-    int n;//4dbytes
-    int max_size;//4bytes
-    double* map_values;//8bytes
-    int* map_id;//4bytes
+struct Item{
+    int id;
+    double value;
 };
 
-typedef struct binary_heap binary_heap;
+struct binary_heap{
+    Item* pq;
+    int* map;
+    int maxN;
+    int n;
+};
 
-binary_heap* new_binary_heap(int size){
-    binary_heap* new_heap = calloc(1, sizeof(binary_heap));
-    if(new_heap==NULL) {
-        fprintf(stderr,"ERROR, NEW HEAP IS NOT ALLOCATED\n");
-        exit(1);
+static void print_map(binary_heap* h){
+    int i;
+    for(i = 0; i < h->maxN; i++){
+        printf("index: %d, in the heap: %d\n", i, h->map[i]);
     }
-    new_heap->h = malloc((size+1)*sizeof(int));
-    assertx( (new_heap->h) !=NULL, "ERRO, NEW ARRAY IS NULL");
-
-   new_heap->map_id = malloc((size+1)*sizeof(int));
-   assertx(new_heap->map_id != NULL, "ERRO, MAP_ID ARRAY IS NULL");
-
-    new_heap->map_values = malloc((size+1)*sizeof(double));
-    assertx(new_heap->map_values != NULL, "ERRO, MAP_VALUES ARRAY IS NULL");
-
-    new_heap->max_size = size;
-    return new_heap;
 }
 
-static void swap(binary_heap* a, int x, int y){
-    
+
+//=======================Static============================
+//otimização futura: não usar função more, passar o ponteiro é bobagem
+static int more(Item* a, Item* b){
+    return (a->value > b->value);
+}
+
+static void swap(binary_heap* h, int i, int j) {
+    int map_i = h->map[h->pq[i].id];
+    int map_j = h->map[h->pq[j].id];
+
     //troca conteúdos
-    int temp = a->h[x];
-    a->h[x] = a->h[y];
-    a->h[y] = temp;
+    Item temp = h->pq[i];
+    h->pq[i] = h->pq[j];
+    h->pq[j] = temp;
 
-    //troca ids
-    int temp2 = a->map_id[x];
-    a->map_id[x] = a->map_id[y];
-    a->map_id[y] = temp2;
-    
+
+    h->map[h->pq[i].id] = map_i;
+    h->map[h->pq[j].id] = map_j;
+
 }
 
 
-
-//x > y ?
-static int greater(double x, double y){
-    
-    if( x > y) return 0;
-    return 1;
-}
-//x < y ?
-static int less(double x, double y){
-    
-    if( x < y ) return 0;
-    return 1;
-}
-
-static int cmp(double x, double y){
-    if(greater(x, y)) return 1;
-    else if( less(x,y) ) return -1;
-    return 0;
-}
-
-static void sift_up(binary_heap* a, int i){
-    if(a==NULL) return;
-    
-    while(i > 0 &&  !greater(a->map_values[a->h[((i-1)/2)]], a->map_values[a->h[i]]) ){
-        swap(a, i, (i-1)/2 );
-        i = (i-1)/2;
+static void fix_up(binary_heap* h,  int k){
+    while ( k > 1 && more( &(h->pq[k/2]), &(h->pq[k]) ) ){
+        swap(h, k, k/2);
+        k = k/2;
     }
 }
 
-void insert(binary_heap* a, int x, double value){
-    if(a==NULL) return;
-    if(a->n == a->max_size){
-        return;//heap is full
-    }
-    a->h[a->n] = x;
-    a->map_id[x] = a->n;
-    a->map_values[x] = value;
-    a->n++;
-    sift_up(a, (a->n) - 1);
-}
-
-
-static void sift_down(binary_heap* a, int i){
-    if(a==NULL) return;
-    int j= 0;
-
-    //1 >= child
-    while( 2*i + 1 < a->n){
-
-        //take the child with the biggest priority ( in this case, min(left_child, right_child) )
-        j = 2*i + 1;
-        if( (2*i + 2) < (a->n) && cmp( a->map_values[a->h[2*i+2]] , a->map_values[a->h[j]] ) < 0 ){
-            j = 2*i + 2;
+static void fix_down(binary_heap* h, int sz, int k){
+    while (2*k <= sz) {
+        int j = 2*k;
+        if (j < sz && more( &(h->pq[j]), &(h->pq[j+1]) ) ){
+            j++;
         }
-
-        //keeps the property, dad has bigger or equal priority ( in this case, dad <= min(left_child, right_child))
-        if( cmp( a->map_values[a->h[i]], a->map_values[a->h[j]]) <= 0){
+        if (!more( &(h->pq[k]), &(h->pq[j]) ) ) {
             break;
         }
-        else {
-            swap(a, j, i);
-            i = j;
-        }
+        swap(h, k, j);
+        k = j;
+  }
+}
 
+
+
+static Item remove_min(binary_heap* h){
+    Item min = h->pq[1];
+    swap(h, 1, h->n);
+    h->n--;
+    fix_down(h, h->n, 1);
+    h->map[min.id] = -1;
+    return min;
+}
+
+static Item pq_min(binary_heap* h){
+    return h->pq[1];
+}
+
+static void print_item(Item a){
+    printf("Item ( id = %d, value = %.2lf )\n", a.id, a.value);
+}
+
+/*static void print_map(binary_heap* h){
+    int i;
+    for(i = 0; i < h->maxN; i++){
+        printf("index: %d, in the heap: %d\n", i, h->map[i]);
+    }
+}*/
+
+
+//===========================================================
+
+Item new_item(int id, double value){
+    Item i;
+    i.id = id;
+    i.value = value;
+    return i;
+}
+
+binary_heap* new_binary_heap(int size){
+    binary_heap* h = malloc(sizeof(binary_heap));
+    assertx(h!=NULL, "HEAP NULL");
+    h->pq = malloc((size+1)*sizeof(Item));
+    assertx(h->pq != NULL, "ITEM ARRAY NULL");
+    h->map = malloc((size)*sizeof(int));
+    assertx(h->map != NULL, "MAP IS NULL");
+    for(int i = 0; i < size; i++){
+        h->map[i] = -1;
+    }
+    h->n = 0;
+    h->maxN = size;
+    return h;
+}
+
+
+void insert(binary_heap* h, int x, double value){
+    assertx(h!=NULL, "HEAP NULL");
+   
+    Item v = new_item(x, value);
+    h->n++;
+    h->pq[h->n] = v;
+    h->map[x] = h->n;
+    fix_up(h, h->n);
+}
+
+
+double heap_get_priority_top(binary_heap* h){
+    return pq_min(h).value;
+}
+
+int top_heap(binary_heap* h){
+    return pq_min(h).id;
+}
+
+int remove_(binary_heap* h){
+    Item t = remove_min(h);
+    return t.id;
+}
+
+int get_size_binary_heap(binary_heap* h){
+    return h->n;
+}
+
+bool pq_empty(binary_heap* h){
+    return h->n == 0;
+}
+
+void decrease_key(binary_heap* h, int id, double value){
+    int i = h->map[id];
+    h->pq[i].value = value;
+    print_item(h->pq[i]);
+    print_map(h);
+
+    printf("modified vertex index: %d,- %d, i:%d\n", h->pq[i].id, id, i);
+    show_binary_heap(h);
+    printf("\n");
+
+    fix_up(h, i);
+
+    show_binary_heap(h);
+    printf("\n");
+}
+
+
+/*static void print_item(Item a){
+    printf("Item ( id = %d, value = %.2lf )\n", a.id, a.value);
+}*/
+
+void show_binary_heap(binary_heap* h){
+    for(int i = 1; i <= h->n; i++){
+        printf("Posicao %d :", i);
+        print_item(h->pq[i]);
     }
 }
 
-int remove_(binary_heap* a){
-    if(a==NULL) return FLAG;
-    if(a->n == 0){
-        return FLAG; //flag
-    }
 
-    //printf("swaped: %d,%d returned: ", a->h[a->n-1], a->h[0]);
-    swap(a, (a->n)-1, 0);
-    a->n--;
-    sift_down(a, 0);
-    //
-    return a->h[a->n];
+void delete_binary_heap(binary_heap* h){
+    free(h->map);
+    free(h->pq);
+    free(h);
 }
-
-//for user only!
-double heap_get_priority(binary_heap* a, int id){
-    return a->map_values[a->h[a->map_id[id]]];
-}
-
-void heap_set_priority(binary_heap* a, int id, double value){
-    if(a==NULL) return;
-    int idx = a->map_id[id];
-    a->map_values[idx] = value;
-    sift_up(a, idx);
-}
-
-
-int top_heap(binary_heap* a){
-    if(a==NULL || a->n == 0) return FLAG;
-    return  a->h[0];
-}
-
-void delete_binary_heap(binary_heap* a){
-    if(a==NULL) return;
-    if(a->h)free(a->h);
-    if(a->map_id)free(a->map_id);
-    if(a->map_values)free(a->map_values);
-    free(a);
-}
-
-int heap_get_heap_id(binary_heap* a, int idx){
-    return a->map_id[idx];
-}
-
-void show_binary_heap(binary_heap* a){
-    if(a==NULL) return;
-    for(int i =0; i < a->n; i ++){
-
-        printf("heap_id = %d, map_values = %lf \n", i, a->map_values[a->h[i]]);
-
-    }
-    puts("");
-    return ;
-}
-
-int get_size_binary_heap(binary_heap* a ){
-    if(a==NULL) return -FLAG;
-    return a->n;
-}
-

@@ -5,26 +5,29 @@
 #include "assertx.h"
 #include <math.h>
 #include <limits.h>
+#include <stdbool.h>
 typedef struct binary_heap binary_heap;
+typedef struct Item Item;
 
 binary_heap* new_binary_heap(int size);
 
-void insert(binary_heap* a, int x, double value);
+void insert(binary_heap* h, int x, double value);
 
-double heap_get_priority(binary_heap* a, int id);
+double heap_get_priority_top(binary_heap* h);
 
-int heap_get_heap_id(binary_heap* a, int idx);
+void decrease_key(binary_heap* h, int id, double value);
 
-void heap_set_priority(binary_heap* a, int id, double value);
+int remove_(binary_heap* h);
 
-int remove_(binary_heap* a);
+int top_heap(binary_heap* h);
 
-int top_heap(binary_heap* a);
+int get_size_binary_heap(binary_heap* h);
 
-void delete_binary_heap(binary_heap* a);
+void show_binary_heap(binary_heap* h);
 
-void show_binary_heap(binary_heap* a );
+void delete_binary_heap(binary_heap* h);
 
-int get_size_binary_heap(binary_heap* a );
+
+
 
 #endif //HEAP_H

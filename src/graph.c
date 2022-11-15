@@ -138,22 +138,22 @@ void graph_free(Graph* g){
 void graph_TOTAL_Dijkstra(Graph* g){
     int i;
     printf("\n\nTRYING TO DO TOTAL DIJKSTRA\n\n");
-    priority_queue* queue = new_priority_queue(g->qtd_vertex);
+    
     //adjacency_list_print(g->list);
     for(i = 0; i < g->qtd_vertex; i++){
-        graph_Dijkstra(g, i, g->adjacency_matrix[i], NULL, queue);
+        graph_Dijkstra(g, i, g->adjacency_matrix[i], NULL);
     }
-    delete_priority_queue(queue);
+    
     printf("\n\n");
     graph_print_minimum_paths(g);
 }
 
-void graph_Dijkstra(Graph* g, int source, double* dist, int* prev, priority_queue* queue){
+void graph_Dijkstra(Graph* g, int source, double* dist, int* prev){
     int size = graph_get_qtd(g);
     printf("---Beginning of a new Djikstra: %d\n", source);
     dist[source] = 0;
     //prev[source] = -1;
-
+    priority_queue* queue = new_priority_queue(g->qtd_vertex);
     int i;
     for(i = 0; i < size; i++){
         if(i != source){
@@ -198,7 +198,8 @@ void graph_Dijkstra(Graph* g, int source, double* dist, int* prev, priority_queu
 
         }
     }
-    assertx(count == 9, "Faltando analisar aresta");
+    //assertx(count == 9, "Faltando analisar aresta");
+    delete_priority_queue(queue);
     printf("Trying to do Dijkstra\n");
 }
 
