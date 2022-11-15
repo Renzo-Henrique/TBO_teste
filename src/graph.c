@@ -137,20 +137,20 @@ void graph_free(Graph* g){
  */
 void graph_TOTAL_Dijkstra(Graph* g){
     int i;
-    printf("\n\nTRYING TO DO TOTAL DIJKSTRA\n\n");
+    printf("TRYING TO DO TOTAL DIJKSTRA\n\n");
     
     //adjacency_list_print(g->list);
     for(i = 0; i < g->qtd_vertex; i++){
         graph_Dijkstra(g, i, g->adjacency_matrix[i], NULL);
     }
     
-    printf("\n\n");
+    //printf("\n\n");
     graph_print_minimum_paths(g);
 }
 
 void graph_Dijkstra(Graph* g, int source, double* dist, int* prev){
     int size = graph_get_qtd(g);
-    printf("---Beginning of a new Djikstra: %d\n", source);
+    //printf("---Beginning of a new Djikstra: %d\n", source);
     dist[source] = 0;
     //prev[source] = -1;
     priority_queue* queue = new_priority_queue(g->qtd_vertex);
@@ -171,9 +171,7 @@ void graph_Dijkstra(Graph* g, int source, double* dist, int* prev){
     int count = 0;
 
     while( size_queue(queue) > 0){
-        show_inside_priority_queue(queue);
         u = pop(queue);
-        printf("'''%d'''\n", u);
         //stops when neighbor == NULL
         while(1){
             neighbor = adjacency_list_next_neighbor(g->list, u, neighbor);
@@ -183,7 +181,6 @@ void graph_Dijkstra(Graph* g, int source, double* dist, int* prev){
             }
             count++;
             v = adjacency_list_get_index_neighbor(neighbor);
-            printf("(%d,%d)\n", u, v);
             //melhorar o jeito de encontrar vizinho
             double edge = adjacency_list_get_weight(neighbor);
 
@@ -200,7 +197,7 @@ void graph_Dijkstra(Graph* g, int source, double* dist, int* prev){
     }
     //assertx(count == 9, "Faltando analisar aresta");
     delete_priority_queue(queue);
-    printf("Trying to do Dijkstra\n");
+    //printf("Trying to do Dijkstra\n");
 }
 
 /**

@@ -21,21 +21,7 @@ int main(int argc, char* argv[]){
     read_input(input_file, &V, &E, &S, &C, &M, &server, &client, &monitor, &g);
     priority_queue* q = new_priority_queue(10);
 
-    for(int i = 0; i <= 9; i++){
-        push(q, i, 1.0*i*((rand())%10));
-        //set_priority(q, i, (1.0)*rand()/rand() );
-    }
-
-    puts("PRIORITY QUEUE");
-    show_inside_priority_queue(q);
-    puts("");
-    puts("PRIORITY QUEUE AFTER CHANGES");
     
-    for(int i = 0; i <= 9; i++){
-        set_priority(q, i, (1.0*i*(rand()%10)) );
-    }
-    show_inside_priority_queue(q);
-    puts("");
 
     //doing Dijkstra
     graph_TOTAL_Dijkstra(g);

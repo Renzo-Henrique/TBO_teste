@@ -72,7 +72,7 @@ static Item remove_min(binary_heap* h){
     swap(h, 1, h->n);
     h->n--;
     fix_down(h, h->n, 1);
-    h->map[min.id] = -1;
+    
     return min;
 }
 
@@ -152,17 +152,9 @@ bool pq_empty(binary_heap* h){
 void decrease_key(binary_heap* h, int id, double value){
     int i = h->map[id];
     h->pq[i].value = value;
-    print_item(h->pq[i]);
-    print_map(h);
-
-    printf("modified vertex index: %d,- %d, i:%d\n", h->pq[i].id, id, i);
-    show_binary_heap(h);
-    printf("\n");
 
     fix_up(h, i);
 
-    show_binary_heap(h);
-    printf("\n");
 }
 
 
