@@ -141,11 +141,12 @@ void graph_TOTAL_Dijkstra(Graph* g){
     
     //adjacency_list_print(g->list);
     for(i = 0; i < g->qtd_vertex; i++){
+        //printf("Dijkstra vertex %d\n", i);
         graph_Dijkstra(g, i, g->adjacency_matrix[i], NULL);
     }
     
     //printf("\n\n");
-    graph_print_minimum_paths(g);
+    //graph_print_minimum_paths(g);
 }
 
 void graph_Dijkstra(Graph* g, int source, double* dist, int* prev){
