@@ -7,6 +7,8 @@
 
 typedef struct graph Graph;
 
+typedef struct graph_inflation Graph_inflation;
+
 Graph* graph_init(int qtd);
 
 int graph_get_qtd(Graph* g);
@@ -35,5 +37,13 @@ void graph_free(Graph* g);
 void graph_TOTAL_Dijkstra(Graph* g);
 
 void graph_Dijkstra(Graph* g, int source, double* dist, int* prev);
+
+double calculate_RTT(Graph* g, int i, int j);
+
+void calculate_inflation(Graph* g, int S, int C, int M, int* server, int* client, int* monitor);
+
+double calculate_inflation2(Graph *g, int server, int client, int monitor);
+
+void inicitialize_inflation(Graph *g, int S, int C, int M, int *server, int *client, int *monitor);
 
 #endif

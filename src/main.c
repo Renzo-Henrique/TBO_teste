@@ -20,11 +20,13 @@ int main(int argc, char* argv[]){
     FILE* input_file = file_open(argv[1], "r");
     read_input(input_file, &V, &E, &S, &C, &M, &server, &client, &monitor, &g);
     priority_queue* q = new_priority_queue(10);
-
-    
+      
 
     //doing Dijkstra
     graph_TOTAL_Dijkstra(g);
+    
+    inicitialize_inflation(g, S, C, M, server, client, monitor);
+    //calculate_inflation(g, S, C, M, server, client, monitor);
 
     graph_free(g);
     free(server);
