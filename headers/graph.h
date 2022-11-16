@@ -44,4 +44,6 @@ double calculate_RTT_approximate(Graph *g, int server, int client, int *monitor,
 
 void inicitialize_inflation(Graph *g, int S, int C, int M, int *server, int *client, int *monitor);
 
+void inflation_free(Graph_inflation* i);
+
 #endif

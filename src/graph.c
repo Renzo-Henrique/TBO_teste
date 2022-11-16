@@ -168,6 +168,10 @@ void graph_free(Graph *g)
     free(g);
 }
 
+void inflation_free(Graph_inflation* i){
+    free(i);
+}
+
 /**
  * Dijkstra eh do graph.h??
  * Fazer funcoes:
@@ -287,6 +291,8 @@ void inicitialize_inflation(Graph *g, int S, int C, int M, int *server, int *cli
             }
         }
     } */
+
+    inflation_free(inflation);
 }
 
 double calculate_RTT_approximate(Graph *g, int server, int client, int *monitor, int M)
