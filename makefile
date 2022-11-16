@@ -29,4 +29,4 @@ format:
 .PHONY: all clean test docs format
 
 tes: all
-	./trab2 in >saida.txt
+	./trab2 in/in_t >saida.txt

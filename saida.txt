@@ -1,7 +1,0 @@
-TRYING TO DO TOTAL DIJKSTRA
-
-Dijkstra vertex 0
-Dijkstra vertex 1
-Dijkstra vertex 2
-Dijkstra vertex 3
-Dijkstra vertex 4
