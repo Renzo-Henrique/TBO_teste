@@ -40,9 +40,7 @@ void graph_Dijkstra(Graph* g, int source, double* dist, int* prev);
 
 double calculate_RTT(Graph* g, int i, int j);
 
-void calculate_inflation(Graph* g, int S, int C, int M, int* server, int* client, int* monitor);
-
-double calculate_inflation2(Graph *g, int server, int client, int monitor);
+double calculate_RTT_approximate(Graph *g, int server, int client, int *monitor, int M);
 
 void inicitialize_inflation(Graph *g, int S, int C, int M, int *server, int *client, int *monitor);
 

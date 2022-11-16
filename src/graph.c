@@ -245,100 +245,15 @@ void graph_Dijkstra(Graph *g, int source, double *dist, int *prev)
     delete_priority_queue(queue);
     // printf("Trying to do Dijkstra\n");
 }
-/*
-void calculate_inflation(Graph *g, int S, int C, int M, int *server, int *client, int *monitor)
-{
-    // float inflation;
-    double vector_size = S * C;
-    double *RTT_base = malloc((vector_size) * sizeof(double));
-    double *RTT_estimated = malloc((vector_size) * sizeof(double));
-    double *RTT_S_M = malloc((S * M) * sizeof(double));
-    double *RTT_M_C = malloc((M * C) * sizeof(double));
-    double *mins = malloc((S * C * M) * sizeof(double));
-    int counter = 0;
-
-    for (int i = 0; i < S; i++)
-    {
-        for (int j = 0; j < C; j++)
-        {
-            RTT_base[counter++] = calculate_RTT(g, server[i], client[j]);
-        }
-    }
-
-    for (int i = 0; i < S * C; i++)
-    {
-        printf("%f ", RTT_base[i]);
-    }
-
-    printf("\n");
-
-    //////////////////////////////////////////////
-    // aqui estou tentando comacar a calcula o RTT*
-    //////////////////////////////////////////////
-    counter = 0;
-    for (int i = 0; i < S; i++)
-    {
-        for (int j = 0; j < M; j++)
-        {
-            RTT_S_M[counter++] = calculate_RTT(g, server[i], monitor[j]);
-        }
-    }
-
-    for (int i = 0; i < S * M; i++)
-    {
-        printf("%f ", RTT_S_M[i]);
-    }
-
-    printf("\n");
-
-    counter = 0;
-    for (int i = 0; i < M; i++)
-    {
-        for (int j = 0; j < C; j++)
-        {
-            RTT_M_C[counter++] = calculate_RTT(g, monitor[i], client[j]);
-        }
-    }
-
-    for (int i = 0; i < M * C; i++)
-    {
-        printf("%f ", RTT_M_C[i]);
-    }
-
-    printf("\n");
-
-    for (int i = 0; i < M * C * S; i++)
-    {
-        mins[i] = RTT_S_M[i] + RTT_M_C[i];
-    }
-
-    for (int i = 0; i < M * C * S; i++)
-    {
-        printf("%f, ", mins[i]);
-    }
-    printf("\n");
-
-    for (int i = 0; i < S; i++)
-    {
-        printf("%d\n", server[i]);
-    }
-    for (int i = 0; i < C; i++)
-    {
-        printf("%d\n", client[i]);
-    }
-    for (int i = 0; i < M; i++)
-    {
-        printf("%d ", monitor[i]);
-    }
-    // return inflation;
-} */
 
 void inicitialize_inflation(Graph *g, int S, int C, int M, int *server, int *client, int *monitor)
 {
     int i = 0;
     int size_vector = S * C;
     Graph_inflation *inflation;
-    inflation = malloc(size_vector * sizeof(int));
+    inflation = malloc(size_vector * sizeof(Graph_inflation));
+    double RTT_pointer;
+    double RTT;
 
     for (int a = 0; a < S; a++)
     {
@@ -354,14 +269,14 @@ void inicitialize_inflation(Graph *g, int S, int C, int M, int *server, int *cli
     {
         for (int k = 0; k < C; k++)
         {
-            for (int l = 0; l < M; l++)
-            {
-                // primeir_RTT_estimated = calculate_RTT(g, server[j], monitor[l]) + calculate_RTT(g, monitor[l], client[k]);
-                inflation[i].weight = calculate_inflation2(g, server[j], client[k], monitor[l]);
-            }
+            RTT = calculate_RTT(g, server[j], client[k]);
+            RTT_pointer = calculate_RTT_approximate(g, server[j], client[k], monitor, M);
+            // printf("RTT POINTER: %f", RTT_pointer);
+            inflation[i++].weight = RTT_pointer / RTT;
         }
     }
 
+    // imprimindo todas o struct com o servidor e destino e a inflacao calculada
 /*     for (int j = 0; j < S; j++)
     {
         for (int k = 0; k < C; k++)
@@ -374,22 +289,21 @@ void inicitialize_inflation(Graph *g, int S, int C, int M, int *server, int *cli
     } */
 }
 
-double calculate_inflation2(Graph *g, int server, int client, int monitor)
+double calculate_RTT_approximate(Graph *g, int server, int client, int *monitor, int M)
 {
-    double RTT_base = 0;
-    double RTT_estimated = 0;
-    double inflation = 0;
+    double RTT_maior;
+    double RTT_menor = calculate_RTT(g, server, monitor[0]) + calculate_RTT(g, monitor[0], client);
 
-    RTT_base = calculate_RTT(g, server, client);
-
-    // printf("RTT base da inflation2: %f", RTT_base);
-
-    RTT_estimated = calculate_RTT(g, server, monitor) + calculate_RTT(g, monitor, client);
-
-    inflation = RTT_estimated / RTT_base;
-    printf("TODA INFLACAO CALCULADA: %f\n", inflation);
-
-    return inflation;
+    for (int i = 0; i < M; i++)
+    {
+        RTT_maior = calculate_RTT(g, server, monitor[i]) + calculate_RTT(g, monitor[i], client);
+        if (RTT_menor > RTT_maior)
+        {
+            RTT_menor = RTT_maior;
+        }
+    }
+    // printf("RTT devolvido: %f\n", RTT_menor);
+    return RTT_menor;
 }
 
 /**
