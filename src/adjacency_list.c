@@ -105,12 +105,14 @@ void adjacency_list_print(Adjacency_list* l){
     }
 }
 
-void adjacency_list_free(Adjacency_list* l){
+Adjacency_list* adjacency_list_free(Adjacency_list* l){
+    Adjacency_list* auxiliar = l;
+    l = NULL;
     Cell* aux, *last;
 
     int i;
-    for(i = 0; i < l->size; i++){
-        aux = l->vector[i];
+    for(i = 0; i < auxiliar->size; i++){
+        aux = auxiliar->vector[i];
         while(aux!=NULL){
             last = aux;
             aux = aux->next;
@@ -118,7 +120,9 @@ void adjacency_list_free(Adjacency_list* l){
             free(last);
         }
     }
-    free(l->vector);
-    free(l);
+    free(auxiliar->vector);
+    free(auxiliar);
+
+    return NULL;
 }
 

@@ -4,6 +4,7 @@
 #include "graph.h"
 #include "priority_queue.h"
 #include "adjacency_list.h"
+#include "rtt.h"
 
 //infinitE is 1M
 #define INFINITE 1000000
@@ -125,7 +126,10 @@ void graph_free(Graph* g){
     //free in vetor_vertex
     free(g->vetor_vertex);
 
-    adjacency_list_free(g->list);
+    //ver se a lista de adjacencia já foi desalocada
+    if(g->list != NULL){
+        adjacency_list_free(g->list);
+    }
     //free in graph g
     free(g);
 }
@@ -137,7 +141,7 @@ void graph_free(Graph* g){
  */
 void graph_TOTAL_Dijkstra(Graph* g){
     int i;
-    printf("TRYING TO DO TOTAL DIJKSTRA\n\n");
+    //printf("TRYING TO DO TOTAL DIJKSTRA\n\n");
     
     //adjacency_list_print(g->list);
     for(i = 0; i < g->qtd_vertex; i++){
@@ -147,6 +151,7 @@ void graph_TOTAL_Dijkstra(Graph* g){
     
     //printf("\n\n");
     //graph_print_minimum_paths(g);
+    g->list = adjacency_list_free(g->list);
 }
 
 void graph_Dijkstra(Graph* g, int source, double* dist, int* prev){
@@ -202,27 +207,68 @@ void graph_Dijkstra(Graph* g, int source, double* dist, int* prev){
 }
 
 /**
-1  function Dijkstra(Graph, source):
-2      dist[source] ← 0                           // Initialization
-3
-4      create vertex priority queue Q
-5
-6      for each vertex v in Graph.Vertices:
-7          if v ≠ source
-8              dist[v] ← INFINITE                 // Unknown distance from source to v
-9              prev[v] ← UNDEFINED                // Predecessor of v
-10
-11         Q.add_with_priority(v, dist[v])
-12
-13
-14     while Q is not empty:                      // The main loop
-15         u ← Q.extract_min()                    // Remove and return best vertex
-16         for each neighbor v of u:              // Go through all v neighbors of u
-17             alt ← dist[u] + Graph.Edges(u, v)
-18             if alt < dist[v]:
-19                 dist[v] ← alt
-20                 prev[v] ← u
-21                 Q.decrease_priority(v, alt)
-22
-23     return dist, prev
+ * INFLATION CALCULATION----------------------------------
+ * ----------------------------------
+ * --------------------------
+ * ----------------------
+ * -----------------
+ * -------------
+ * -------
+ * ---
+ * -------------INFLATION CALCULATION
  */
+static double calculate_RTT(Graph *g, int i, int j)
+{
+    double RTT;
+    RTT = g->adjacency_matrix[i][j] + g->adjacency_matrix[j][i];
+
+    return RTT;
+}
+
+static double calculate_RTT_approximate(Graph *g, int server, int client, int *monitor, int M)
+{
+    double RTT_maior;
+    double RTT_menor = calculate_RTT(g, server, monitor[0]) + calculate_RTT(g, monitor[0], client);
+
+    for (int i = 1; i < M; i++)
+    {
+        RTT_maior = calculate_RTT(g, server, monitor[i]) + calculate_RTT(g, monitor[i], client);
+        if (RTT_menor > RTT_maior)
+        {
+            RTT_menor = RTT_maior;
+        }
+    }
+    // printf("RTT devolvido: %f\n", RTT_menor);
+    return RTT_menor;
+}
+
+void graph_calculate_inflation(Graph *g, int S, int C, int M, int *server, int *client, int *monitor, FILE* output)
+{   
+    //printf("Server: %d, Client: %d, Monitor: %d\n", S,C,M);
+    int size_vector = S * C;
+    Inflation* vector_inflation = inflation_init(size_vector);
+    double RTT_pointer;
+    double RTT;
+
+    int position = 0;
+    for (int j = 0; j < S; j++)
+    {
+        for (int k = 0; k < C; k++)
+        {   
+            if(server[j] == client[k] && client[k] == 0){
+                printf("Pq tem dois 0? %d,%d\n", server[j], client[k]);
+            }
+            //printf("%d,%d\n", server[j], client[k]);
+            RTT = calculate_RTT(g, server[j], client[k]);
+            RTT_pointer = calculate_RTT_approximate(g, server[j], client[k], monitor, M);
+            // printf("RTT POINTER: %f", RTT_pointer);
+            inflation_set_elements(vector_inflation, position, server[j], client[k], RTT_pointer / RTT);
+            position++;
+        }
+    }
+    printf("Trying to sort the inflation\n");
+    inflation_sort(vector_inflation, size_vector);
+    inflation_print(vector_inflation, size_vector, output);
+    
+    inflation_free(vector_inflation);
+}

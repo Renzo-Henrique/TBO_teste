@@ -36,4 +36,6 @@ void graph_TOTAL_Dijkstra(Graph* g);
 
 void graph_Dijkstra(Graph* g, int source, double* dist, int* prev);
 
+void graph_calculate_inflation(Graph *g, int S, int C, int M, int *server, int *client, int *monitor, FILE* output);
+
 #endif

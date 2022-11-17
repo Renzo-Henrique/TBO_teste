@@ -24,7 +24,7 @@ double adjacency_list_get_edge(Adjacency_list* l, int source, int final);
 
 void adjacency_list_print(Adjacency_list* l);
 
-void adjacency_list_free(Adjacency_list* l);
+Adjacency_list* adjacency_list_free(Adjacency_list* l);
 
 
 
