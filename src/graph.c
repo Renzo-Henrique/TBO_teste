@@ -78,6 +78,10 @@ double graph_get_edge_list(Graph* g, int line, int column){
     return adjacency_list_get_edge(g->list, line, column);
 }
 
+double** graph_get_minimum_paths(Graph* g){
+    return g->adjacency_matrix;
+}
+
 void graph_print_adjacency(Graph* g){
     if(g==NULL) return;
 
@@ -146,7 +150,7 @@ void graph_TOTAL_Dijkstra(Graph* g){
     //adjacency_list_print(g->list);
     for(i = 0; i < g->qtd_vertex; i++){
         //printf("Dijkstra vertex %d\n", i);
-        graph_Dijkstra(g, i, g->adjacency_matrix[i], NULL);
+        graph_Dijkstra(g, i, g->adjacency_matrix[i]);
     }
     
     //printf("\n\n");
@@ -154,7 +158,7 @@ void graph_TOTAL_Dijkstra(Graph* g){
     g->list = adjacency_list_free(g->list);
 }
 
-void graph_Dijkstra(Graph* g, int source, double* dist, int* prev){
+void graph_Dijkstra(Graph* g, int source, double* dist){
     int size = graph_get_qtd(g);
     //printf("---Beginning of a new Djikstra: %d\n", source);
     dist[source] = 0;
@@ -217,6 +221,7 @@ void graph_Dijkstra(Graph* g, int source, double* dist, int* prev){
  * ---
  * -------------INFLATION CALCULATION
  */
+/*
 static double calculate_RTT(Graph *g, int i, int j)
 {
     double RTT;
@@ -262,7 +267,7 @@ void graph_calculate_inflation(Graph *g, int S, int C, int M, int *server, int *
             RTT = calculate_RTT(g, server[j], client[k]);
             RTT_pointer = calculate_RTT_approximate(g, server[j], client[k], monitor, M);
             // printf("RTT POINTER: %f", RTT_pointer);
-            inflation_set_elements(vector_inflation, position, server[j], client[k], RTT_pointer / RTT);
+            rtt_set_elements(vector_inflation, position, server[j], client[k], RTT_pointer / RTT);
             position++;
         }
     }
@@ -271,4 +276,4 @@ void graph_calculate_inflation(Graph *g, int S, int C, int M, int *server, int *
     inflation_print(vector_inflation, size_vector, output);
     
     inflation_free(vector_inflation);
-}
+}*/

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "rtt.h"
+#include "graph.h"
 
 struct inflation
 {
@@ -9,11 +10,11 @@ struct inflation
     float weight;
 };
 
-Inflation* inflation_init(int size){
+Inflation* rtt_init(int size){
     return (Inflation*)malloc(size*sizeof(Inflation));
 }
 
-void inflation_set_elements(Inflation* f, int index, int s, int c, double weight){
+void rtt_set_elements(Inflation* f, int index, int s, int c, double weight){
     f[index].source = s;
     f[index].destiny = c;
     f[index].weight = weight;
@@ -23,15 +24,69 @@ void inflation_set_elements(Inflation* f, int index, int s, int c, double weight
     }
 }
 
-void inflation_print(Inflation* f, int size, FILE* output){
+void rtt_print(Inflation* f, int size, FILE* output){
     int i;
     for(i = 0; i < size; i++){
         fprintf(output, "%d %d %lf\n", f[i].source, f[i].destiny, f[i].weight);
     }
 }
 
-void inflation_free(Inflation* i){
+void rtt_free(Inflation* i){
     free(i);
+}
+
+
+static double calculate_RTT(double** minimum_path, int size, int i, int j)
+{
+    double RTT = minimum_path[i][j] + minimum_path[j][i];
+
+    return RTT;
+}
+
+static double calculate_RTT_approximate(double** minimum_path, int size, int server, int client, int *monitor, int M)
+{
+    double RTT_maior;
+    double RTT_menor = calculate_RTT(minimum_path, size, server, monitor[0]) + calculate_RTT(minimum_path, size, monitor[0], client);
+
+    for (int i = 1; i < M; i++)
+    {
+        RTT_maior = calculate_RTT(minimum_path, size, server, monitor[i]) + calculate_RTT(minimum_path, size, monitor[i], client);
+        if (RTT_menor > RTT_maior)
+        {
+            RTT_menor = RTT_maior;
+        }
+    }
+    // printf("RTT devolvido: %f\n", RTT_menor);
+    return RTT_menor;
+}
+
+Inflation* rtt_calculate_inflation(double** minimum_path, int size, int S, int C, int M, int *server, int *client, int *monitor)
+{   
+    //printf("Server: %d, Client: %d, Monitor: %d\n", S,C,M);
+    int size_vector = S * C;
+    Inflation* vector_inflation = rtt_init(size_vector);
+    double RTT_pointer;
+    double RTT;
+
+    int position = 0;
+    for (int j = 0; j < S; j++)
+    {
+        for (int k = 0; k < C; k++)
+        {   
+            if(server[j] == client[k] && client[k] == 0){
+                printf("Pq tem dois 0? %d,%d\n", server[j], client[k]);
+            }
+            //printf("%d,%d\n", server[j], client[k]);
+            RTT = calculate_RTT(minimum_path, size, server[j], client[k]);
+            RTT_pointer = calculate_RTT_approximate(minimum_path, size, server[j], client[k], monitor, M);
+            // printf("RTT POINTER: %f", RTT_pointer);
+            rtt_set_elements(vector_inflation, position, server[j], client[k], RTT_pointer / RTT);
+            position++;
+        }
+    }
+
+    return vector_inflation;
+    
 }
 
 
@@ -39,7 +94,7 @@ void inflation_free(Inflation* i){
  * FUNCOES USADAS NA ORDENACAO
  * 
  */
-int inflation_comparison(const void* a, const void* b){
+int rtt_comparison(const void* a, const void* b){
     Inflation first_ = *( (Inflation*)(a) );
     Inflation second_ = *( (Inflation*)(b) );
 
@@ -51,6 +106,6 @@ int inflation_comparison(const void* a, const void* b){
     else return 0;
 }
 
-void inflation_sort(Inflation* f, int size){
-    qsort(f, size, sizeof(Inflation), inflation_comparison);
+void rtt_sort(Inflation* f, int size){
+    qsort(f, size, sizeof(Inflation), rtt_comparison);
 }

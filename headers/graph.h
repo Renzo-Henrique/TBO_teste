@@ -22,6 +22,8 @@ void graph_set_edge_list(Graph* g, int line, int column, double weight, Cell* ne
 
 double graph_get_edge_list(Graph* g, int line, int column);
 
+double** graph_get_minimum_paths(Graph* g);
+
 void graph_print_adjacency(Graph* g);
 
 void graph_print_minimum_paths(Graph* g);
@@ -34,7 +36,7 @@ void graph_free(Graph* g);
 
 void graph_TOTAL_Dijkstra(Graph* g);
 
-void graph_Dijkstra(Graph* g, int source, double* dist, int* prev);
+void graph_Dijkstra(Graph* g, int source, double* dist);
 
 void graph_calculate_inflation(Graph *g, int S, int C, int M, int *server, int *client, int *monitor, FILE* output);
 

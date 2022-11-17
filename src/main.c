@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include "priority_queue.h"
 #include "graph.h"
 #include "file.h"
 #include "io.h"
+#include "rtt.h"
 
 #define SERVER 1
 #define CLIENT 2
@@ -18,6 +20,9 @@ static void print_vector(int* vet, int size){
 int main(int argc, char* argv[]){
     assertx( !(argc <= 1) , "Insira parametros de leitura e escrita");
     assertx( !(argc <= 2) , "Insira parametros de escrita");
+
+    double start = clock();
+
     int V, E, S, C, M;
     Graph* g;
     int* server;
@@ -39,15 +44,30 @@ int main(int argc, char* argv[]){
 
     FILE* output_file = file_open(argv[2], "w");
     
-    graph_calculate_inflation(g, S, C, M, server, client, monitor, output_file);
+    Inflation* vector_inflation = rtt_calculate_inflation(graph_get_minimum_paths(g), graph_get_qtd(g), S, C, M, server, client, monitor);
 
+    /* ---- Trying to free memory to improve execution time of rtt_sort
+    */
     graph_free(g);
     free(server);
     free(client);
     free(monitor);
     delete_priority_queue(q);
     file_close(input_file);
+
+    /* Trying to sort the structs of inflation to print in the exit file
+    */
+    //printf("Trying to sort the inflation\n");
+    int size_vector = S * C;
+    rtt_sort(vector_inflation, size_vector);
+    rtt_print(vector_inflation, size_vector, output_file);
+    
+    rtt_free(vector_inflation);
     file_close(output_file);
+
+    double end = clock();
+
+    printf("Execution time is: %lf\n", (end - start)/CLOCKS_PER_SEC);
 
     
     return 0;
