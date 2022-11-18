@@ -158,6 +158,23 @@ void graph_TOTAL_Dijkstra(Graph* g){
     g->list = adjacency_list_free(g->list);
 }
 
+void graph_PARCIAL_Dijkstra(Graph* g,  int S, int C, int M, int *server, int *client, int *monitor){
+    int i;
+    for(i = 0; i < S; i++){
+        graph_Dijkstra(g, server[i], g->adjacency_matrix[ server[i] ]);
+    }
+
+    for(i = 0; i < M; i++){
+        graph_Dijkstra(g, monitor[i], g->adjacency_matrix[ monitor[i] ]);
+    }
+
+    for(i = 0; i < C; i++){
+        graph_Dijkstra(g, client[i], g->adjacency_matrix[ client[i] ]);
+    }
+
+    g->list = adjacency_list_free(g->list);
+}
+
 void graph_Dijkstra(Graph* g, int source, double* dist){
     int size = graph_get_qtd(g);
     //printf("---Beginning of a new Djikstra: %d\n", source);

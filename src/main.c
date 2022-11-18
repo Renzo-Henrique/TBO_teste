@@ -40,7 +40,9 @@ int main(int argc, char* argv[]){
     //print_vector(monitor, M);
 
     //doing Dijkstra
-    graph_TOTAL_Dijkstra(g);
+    //graph_TOTAL_Dijkstra(g);
+    graph_PARCIAL_Dijkstra(g, S, C, M, server, client, monitor);
+
     double end_dijkstra = clock();
 
     FILE* output_file = file_open(argv[2], "w");
