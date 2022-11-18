@@ -51,3 +51,5 @@ valgrind: all create_output
 	valgrind ./trab2 in/N100_S20_C30_M5.txt output/in100.txt
 	valgrind ./trab2 in/N1000_S50_C300_M10.txt output/in1000.txt
 
+maior_v: all
+	valgrind ./trab2 in/N10000_S50_C300_M10.txt new.txt
