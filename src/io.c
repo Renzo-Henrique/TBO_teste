@@ -60,7 +60,7 @@ void read_input(FILE* input_file, int *V, int* E, int* S, int* C, int* M, int** 
                 int x, y;
                 double z;
                 fscanf(input_file, "%d %d %lf", &x, &y, &z);
-                graph_set_edge((*g), x, y, z);
+                //graph_set_edge((*g), x, y, z);
                 //printf("matrix[%d][%d] = %lf\n", x, y, graph_get_edge((*g), x, y));
 
                 //trying to do the adjacency_list

@@ -28,13 +28,14 @@ Graph* graph_init(int qtd){
     /*initializing adjacency matrix wich will contain only the minimum weight to edges 
         ( adjacency_matrix[x][y]>0 indicantes connection and the weight)
     */
-    g->adjacency_matrix = (double**)calloc( qtd, sizeof(double*));
+    //TODO: otimizing to only allocate to servers,clients and monitors
+    /*g->adjacency_matrix = (double**)calloc( qtd, sizeof(double*));
     assertx( (g->adjacency_matrix)!=NULL, "ADJ MATRIX IS NULL");
     int i;
     for(i = 0; i <qtd; i++){
         g->adjacency_matrix[i] = (double*)calloc( qtd, sizeof(double));
         assertx(g->adjacency_matrix[i] != NULL, "ADJ MATRIX LINE IS NULL");
-    }
+    }*/
 
     g->vetor_vertex = (int*)calloc(qtd, sizeof(int));
     assertx(g->vetor_vertex!=NULL, "VECTOR OF VERTEX IS NULL");
@@ -145,7 +146,6 @@ void graph_free(Graph* g){
  */
 void graph_TOTAL_Dijkstra(Graph* g){
     int i;
-    //printf("TRYING TO DO TOTAL DIJKSTRA\n\n");
     
     //adjacency_list_print(g->list);
     for(i = 0; i < g->qtd_vertex; i++){
@@ -159,16 +159,32 @@ void graph_TOTAL_Dijkstra(Graph* g){
 }
 
 void graph_PARCIAL_Dijkstra(Graph* g,  int S, int C, int M, int *server, int *client, int *monitor){
+    /*allocating space for the adjacency_matrix containing the minimum paths
+        of servers, clients and monitors*/
+    g->adjacency_matrix = (double**)calloc( g->qtd_vertex, sizeof(double*));
+    assertx( (g->adjacency_matrix)!=NULL, "ADJ MATRIX IS NULL");
+    
+    
+    
     int i;
     for(i = 0; i < S; i++){
+        g->adjacency_matrix[ server[i] ] = (double*)calloc( g->qtd_vertex, sizeof(double));
+        assertx(g->adjacency_matrix[ server[i] ] != NULL, "ADJ MATRIX LINE IS NULL");
+
         graph_Dijkstra(g, server[i], g->adjacency_matrix[ server[i] ]);
     }
 
     for(i = 0; i < M; i++){
+        g->adjacency_matrix[ monitor[i] ] = (double*)calloc( g->qtd_vertex, sizeof(double));
+        assertx(g->adjacency_matrix[ monitor[i] ] != NULL, "ADJ MATRIX LINE IS NULL");
+
         graph_Dijkstra(g, monitor[i], g->adjacency_matrix[ monitor[i] ]);
     }
 
     for(i = 0; i < C; i++){
+        g->adjacency_matrix[ client[i] ] = (double*)calloc( g->qtd_vertex, sizeof(double));
+        assertx(g->adjacency_matrix[ client[i] ] != NULL, "ADJ MATRIX LINE IS NULL");
+
         graph_Dijkstra(g, client[i], g->adjacency_matrix[ client[i] ]);
     }
 

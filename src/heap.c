@@ -14,12 +14,13 @@ struct binary_heap{
     int n;
 };
 
+/* Used for debbuging
 static void print_map(binary_heap* h){
     int i;
     for(i = 0; i < h->maxN; i++){
         printf("index: %d, in the heap: %d\n", i, h->map[i]);
     }
-}
+}*/
 
 
 //=======================Static============================

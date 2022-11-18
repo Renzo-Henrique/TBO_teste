@@ -36,21 +36,21 @@ void rtt_free(Inflation* i){
 }
 
 
-static double calculate_RTT(double** minimum_path, int size, int i, int j)
+static double calculate_RTT(double** minimum_path, int i, int j)
 {
     double RTT = minimum_path[i][j] + minimum_path[j][i];
 
     return RTT;
 }
 
-static double calculate_RTT_approximate(double** minimum_path, int size, int server, int client, int *monitor, int M)
+static double calculate_RTT_approximate(double** minimum_path, int server, int client, int *monitor, int M)
 {
     double RTT_maior;
-    double RTT_menor = calculate_RTT(minimum_path, size, server, monitor[0]) + calculate_RTT(minimum_path, size, monitor[0], client);
+    double RTT_menor = calculate_RTT(minimum_path, server, monitor[0]) + calculate_RTT(minimum_path, monitor[0], client);
 
     for (int i = 1; i < M; i++)
     {
-        RTT_maior = calculate_RTT(minimum_path, size, server, monitor[i]) + calculate_RTT(minimum_path, size, monitor[i], client);
+        RTT_maior = calculate_RTT(minimum_path, server, monitor[i]) + calculate_RTT(minimum_path, monitor[i], client);
         if (RTT_menor > RTT_maior)
         {
             RTT_menor = RTT_maior;
@@ -60,7 +60,7 @@ static double calculate_RTT_approximate(double** minimum_path, int size, int ser
     return RTT_menor;
 }
 
-Inflation* rtt_calculate_inflation(double** minimum_path, int size, int S, int C, int M, int *server, int *client, int *monitor)
+Inflation* rtt_calculate_inflation(double** minimum_path, int S, int C, int M, int *server, int *client, int *monitor)
 {   
     //printf("Server: %d, Client: %d, Monitor: %d\n", S,C,M);
     int size_vector = S * C;
@@ -77,8 +77,8 @@ Inflation* rtt_calculate_inflation(double** minimum_path, int size, int S, int C
                 printf("Pq tem dois 0? %d,%d\n", server[j], client[k]);
             }
             //printf("%d,%d\n", server[j], client[k]);
-            RTT = calculate_RTT(minimum_path, size, server[j], client[k]);
-            RTT_pointer = calculate_RTT_approximate(minimum_path, size, server[j], client[k], monitor, M);
+            RTT = calculate_RTT(minimum_path, server[j], client[k]);
+            RTT_pointer = calculate_RTT_approximate(minimum_path, server[j], client[k], monitor, M);
             // printf("RTT POINTER: %f", RTT_pointer);
             rtt_set_elements(vector_inflation, position, server[j], client[k], RTT_pointer / RTT);
             position++;

@@ -11,12 +11,12 @@
 #define CLIENT 2
 #define MONITOR 3
 
-static void print_vector(int* vet, int size){
+/*static void print_vector(int* vet, int size){
     for(int i = 0; i < size; i++){
         printf("%d ", vet[i]);
     }
     printf("\n");
-}
+}*/
 int main(int argc, char* argv[]){
     assertx( !(argc <= 1) , "Insira parametros de leitura e escrita");
     assertx( !(argc <= 2) , "Insira parametros de escrita");
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]){
 
     FILE* output_file = file_open(argv[2], "w");
     double start_rtt = clock();
-    Inflation* vector_inflation = rtt_calculate_inflation(graph_get_minimum_paths(g), graph_get_qtd(g), S, C, M, server, client, monitor);
+    Inflation* vector_inflation = rtt_calculate_inflation(graph_get_minimum_paths(g), S, C, M, server, client, monitor);
     double end_rtt = clock();
     /* ---- Trying to free memory to improve execution time of rtt_sort
     */

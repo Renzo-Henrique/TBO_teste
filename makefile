@@ -43,7 +43,7 @@ create_output:
 	mkdir output
 
 maior: all
-	./trab2 in/N10000_S50_C300_M10.txt maior_caso.txt
+	./trab2 in/N10000_S50_C300_M10.txt new.txt
 
 valgrind: all create_output
 	valgrind ./trab2 in/in_t output/in.txt
