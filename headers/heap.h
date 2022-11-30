@@ -23,6 +23,8 @@ int top_heap(binary_heap* h);
 
 int get_size_binary_heap(binary_heap* h);
 
+void clear_binary_heap(binary_heap* h);
+
 void show_binary_heap(binary_heap* h);
 
 void delete_binary_heap(binary_heap* h);

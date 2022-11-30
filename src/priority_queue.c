@@ -11,8 +11,6 @@ void push(priority_queue* q, int id, double value){
         insert(q, id, value);
 }
 
-
-
 double get_priority_top(priority_queue* q){
         return heap_get_priority_top(q);
 }
@@ -34,6 +32,9 @@ int size_queue(priority_queue* q){
         return get_size_binary_heap(q);
 }
 
+void clear(priority_queue* q){
+        clear_binary_heap(q);
+}
 
 void show_inside_priority_queue(priority_queue* q){
         show_binary_heap(q);

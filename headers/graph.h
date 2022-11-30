@@ -38,7 +38,7 @@ void graph_TOTAL_Dijkstra(Graph* g);
 
 void graph_PARCIAL_Dijkstra(Graph* g,  int S, int C, int M, int *server, int *client, int *monitor);
 
-void graph_Dijkstra(Graph* g, int source, double* dist);
+void graph_Dijkstra(Graph* g, int source, double* dist, priority_queue* queue);
 
 void graph_calculate_inflation(Graph *g, int S, int C, int M, int *server, int *client, int *monitor, FILE* output);
 

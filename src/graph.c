@@ -23,23 +23,8 @@ Graph* graph_init(int qtd){
     Graph* g = (Graph*)malloc(sizeof(Graph));
     assertx(g!=NULL, "GRAPH IS NULL");
     g->qtd_vertex = qtd;
-
-
-    /*initializing adjacency matrix wich will contain only the minimum weight to edges 
-        ( adjacency_matrix[x][y]>0 indicantes connection and the weight)
-    */
-    //TODO: otimizing to only allocate to servers,clients and monitors
-    /*g->adjacency_matrix = (double**)calloc( qtd, sizeof(double*));
-    assertx( (g->adjacency_matrix)!=NULL, "ADJ MATRIX IS NULL");
-    int i;
-    for(i = 0; i <qtd; i++){
-        g->adjacency_matrix[i] = (double*)calloc( qtd, sizeof(double));
-        assertx(g->adjacency_matrix[i] != NULL, "ADJ MATRIX LINE IS NULL");
-    }*/
-
     g->vetor_vertex = (int*)calloc(qtd, sizeof(int));
     assertx(g->vetor_vertex!=NULL, "VECTOR OF VERTEX IS NULL");
-
     /*initializing the adjacency_list wich contain the structure being used to search in the graph
     */
     g->list = adjacency_list_init(qtd);
@@ -85,7 +70,6 @@ double** graph_get_minimum_paths(Graph* g){
 
 void graph_print_adjacency(Graph* g){
     if(g==NULL) return;
-
     adjacency_list_print(g->list);
 }
 
@@ -94,7 +78,7 @@ void graph_print_minimum_paths(Graph* g){
     int i,j;
     for(i = 0; i < graph_get_qtd(g); i++){
         for(j = 0; j < graph_get_qtd(g); j++){
-            printf("%.4lf ",g->adjacency_matrix[i][j]);
+            printf("%lf ",g->adjacency_matrix[i][j]);//.4lf
         }
         printf("\n");
     }
@@ -146,15 +130,16 @@ void graph_free(Graph* g){
  */
 void graph_TOTAL_Dijkstra(Graph* g){
     int i;
-    
+    priority_queue* q = new_priority_queue(g->qtd_vertex);
     //adjacency_list_print(g->list);
     for(i = 0; i < g->qtd_vertex; i++){
         //printf("Dijkstra vertex %d\n", i);
-        graph_Dijkstra(g, i, g->adjacency_matrix[i]);
+        graph_Dijkstra(g, i, g->adjacency_matrix[i], q);
     }
     
     //printf("\n\n");
     //graph_print_minimum_paths(g);
+    delete_priority_queue(q);
     g->list = adjacency_list_free(g->list);
 }
 
@@ -164,39 +149,40 @@ void graph_PARCIAL_Dijkstra(Graph* g,  int S, int C, int M, int *server, int *cl
     g->adjacency_matrix = (double**)calloc( g->qtd_vertex, sizeof(double*));
     assertx( (g->adjacency_matrix)!=NULL, "ADJ MATRIX IS NULL");
     
-    
+    priority_queue* q = new_priority_queue(g->qtd_vertex);
     
     int i;
     for(i = 0; i < S; i++){
         g->adjacency_matrix[ server[i] ] = (double*)calloc( g->qtd_vertex, sizeof(double));
         assertx(g->adjacency_matrix[ server[i] ] != NULL, "ADJ MATRIX LINE IS NULL");
 
-        graph_Dijkstra(g, server[i], g->adjacency_matrix[ server[i] ]);
+        graph_Dijkstra(g, server[i], g->adjacency_matrix[ server[i] ], q);
     }
 
     for(i = 0; i < M; i++){
         g->adjacency_matrix[ monitor[i] ] = (double*)calloc( g->qtd_vertex, sizeof(double));
         assertx(g->adjacency_matrix[ monitor[i] ] != NULL, "ADJ MATRIX LINE IS NULL");
 
-        graph_Dijkstra(g, monitor[i], g->adjacency_matrix[ monitor[i] ]);
+        graph_Dijkstra(g, monitor[i], g->adjacency_matrix[ monitor[i] ], q);
     }
 
     for(i = 0; i < C; i++){
         g->adjacency_matrix[ client[i] ] = (double*)calloc( g->qtd_vertex, sizeof(double));
         assertx(g->adjacency_matrix[ client[i] ] != NULL, "ADJ MATRIX LINE IS NULL");
 
-        graph_Dijkstra(g, client[i], g->adjacency_matrix[ client[i] ]);
+        graph_Dijkstra(g, client[i], g->adjacency_matrix[ client[i] ], q);
     }
 
+    delete_priority_queue(q);
     g->list = adjacency_list_free(g->list);
 }
 
-void graph_Dijkstra(Graph* g, int source, double* dist){
+void graph_Dijkstra(Graph* g, int source, double* dist, priority_queue* queue){
     int size = graph_get_qtd(g);
     //printf("---Beginning of a new Djikstra: %d\n", source);
     dist[source] = 0;
     //prev[source] = -1;
-    priority_queue* queue = new_priority_queue(g->qtd_vertex);
+    //priority_queue* queue = new_priority_queue(g->qtd_vertex); ?
     int i;
     for(i = 0; i < size; i++){
         if(i != source){
@@ -238,8 +224,9 @@ void graph_Dijkstra(Graph* g, int source, double* dist){
 
         }
     }
+    clear(queue);
     //assertx(count == 9, "Faltando analisar aresta");
-    delete_priority_queue(queue);
+    //delete_priority_queue(queue); ?
     //printf("Trying to do Dijkstra\n");
 }
 

@@ -146,6 +146,10 @@ int get_size_binary_heap(binary_heap* h){
     return h->n;
 }
 
+void clear_binary_heap(binary_heap* h){
+    h->n = 0; //lazy but fast
+}
+
 bool pq_empty(binary_heap* h){
     return h->n == 0;
 }
